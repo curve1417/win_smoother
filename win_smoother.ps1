@@ -138,6 +138,14 @@
     Write-Host "Hiding 3D Objects icon from This PC..."
     Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}" -Recurse -ErrorAction SilentlyContinue
 
+        Write-Host "Disabling Action Center..."
+    If (!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
+        New-Item -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
+    }
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
+    Write-Host "Disabled Action Center"
+    
     # reuducing ram via regedit
     Write-Host "Using regedit to improve RAM performace"
 
@@ -161,6 +169,9 @@
     Set-ItemProperty -Path "HKLM:\SYSTEM\ControlSet001\Services\Ndu" -Name "Start" -Type DWord -Value 00000004
     Set-ItemProperty -Path "HKLM:\Control Panel\Mouse" -Name "MouseHoverTime" -Type DWord -Value 00000010
 
+    Write-Host "Enabling Dark Mode"
+    Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name AppsUseLightTheme -Value 0
+    Write-Host "Enabled Dark Mode"
 
 	# Network Tweaks
 	Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name "IRPStackSize" -Type DWord -Value 20
@@ -238,7 +249,7 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies
     "PrintNotify"                                  #Disables Windows printer notifications and extentions
     "PcaSvc"                                       #Disables Program Compatibility Assistant Service
     "WPDBusEnum"                                   #Disables Portable Device Enumerator Service
-    #"LicenseManager"                               #Disable LicenseManager(Windows store may not work properly)
+    "LicenseManager"                               #Disable LicenseManager(Windows store may not work properly)
     "seclogon"                                     #Disables  Secondary Logon(disables other credentials only password will work)
     "SysMain"                                      #Disables sysmain
     "lmhosts"                                      #Disables TCP/IP NetBIOS Helper
